@@ -34,7 +34,7 @@ def capture_images(name, num_samples=5):
     cv2.destroyAllWindows()
     return True
 
-# Helper function to train the model using DeepFace
+'''# Helper function to train the model using DeepFace
 def train_model():
     # DeepFace uses database directory approach; you can adapt as needed
     try:
@@ -42,6 +42,29 @@ def train_model():
         return True
     except Exception as e:
         print(e)
+        return False
+'''
+
+# Helper function to train the model using DeepFace
+def train_model():
+    try:
+        # Get all images from dataset
+        image_files = [f for f in os.listdir(DATASET_PATH) if f.endswith(('.jpg', '.jpeg', '.png'))]
+        
+        if not image_files:
+            return False
+            
+        # Use first image to initialize model
+        first_image = os.path.join(DATASET_PATH, image_files[0])
+        
+        # Build representations for all images
+        DeepFace.build_model("VGG-Face")
+        _ = DeepFace.represent(img_path=first_image)
+        
+        return True
+        
+    except Exception as e:
+        print(f"Training error: {str(e)}")
         return False
 
 # Helper function to recognize faces
@@ -81,6 +104,19 @@ def recognize():
         file.save(img_path)
         recognized_name = recognize_face(img_path)
         return jsonify({"name": recognized_name})
+    return jsonify({"name": "unrecognized"})
+
+@app.route('/capture-and-recognize', methods=['GET'])
+def capture_and_recognize():
+    # Capture one image using the existing capture_images function
+    succeeded = capture_images(name='temp_capture', num_samples=1)
+    if succeeded:
+        # Find the last captured file
+        captured_files = sorted(os.listdir(DATASET_PATH))
+        if captured_files:
+            last_file = os.path.join(DATASET_PATH, captured_files[-1])
+            recognized_name = recognize_face(last_file)
+            return jsonify({"name": recognized_name})
     return jsonify({"name": "unrecognized"})
 
 if __name__ == '__main__':

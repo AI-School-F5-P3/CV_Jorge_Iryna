@@ -29,11 +29,19 @@ with st.sidebar:
 
 st.header("Real-Time Recognition")
 
-upload_image = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
-if upload_image is not None:
-    files = {'image': upload_image}
-    res = requests.post(f"{BACKEND_URL}/recognize", files=files)
-    result = res.json()
-    st.write(f"Recognized Name: {result['name']}")
+method = st.selectbox("Choose recognition method", ["Upload an image", "Use webcam"])
+
+if method == "Upload an image":
+    upload_image = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
+    if upload_image is not None:
+        files = {'image': upload_image}
+        res = requests.post(f"{BACKEND_URL}/recognize", files=files)
+        result = res.json()
+        st.write(f"Recognized Name: {result['name']}")
+else:
+    if st.button("Capture & Recognize from Webcam"):
+        res = requests.get(f"{BACKEND_URL}/capture-and-recognize")
+        result = res.json()
+        st.write(f"Recognized Name (Webcam): {result['name']}")
 
 st.info("Use 'Capture Images (Webcam)' in the sidebar to build the dataset and then 'Train'. After that, upload images for recognition.")
