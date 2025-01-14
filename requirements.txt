@@ -1,0 +1,6 @@
+Flask
+Streamlit
+DeepFace
+opencv-python
+Pillow
+requests

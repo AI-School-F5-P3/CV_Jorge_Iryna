@@ -1,0 +1,67 @@
+#app_interface.py
+import requests
+import streamlit as st
+
+# Set page config at the very start
+st.set_page_config(
+    page_title="Face Recognition App",
+    layout="wide"
+)
+
+# Define constants
+BACKEND_URL = "http://localhost:5000"
+
+def check_backend():
+    try:
+        requests.get(BACKEND_URL)
+        return True
+    except requests.exceptions.ConnectionError:
+        st.error("Backend server is not running. Please start the Flask server first.")
+        return False
+    
+def main():
+    st.title("Face Recognition App")
+
+    # Check backend connectivity first
+    if not check_backend():
+        return
+
+    # Sidebar
+    with st.sidebar:
+        st.header("Build Dataset")
+        name_input = st.text_input("Enter name:", key="name_input")
+        if st.button("Capture Images (Webcam)", key="capture_btn"):
+            if name_input:
+                try:
+                    res = requests.post(f"{BACKEND_URL}/build-dataset", data={'name': name_input})
+                    st.write(res.json())
+                except requests.exceptions.RequestException as e:
+                    st.error(f"Error: {str(e)}")
+            else:
+                st.warning("Please enter a name first.")
+
+        st.header("Train Model")
+        if st.button("Train", key="train_btn"):
+            try:
+                res = requests.get(f"{BACKEND_URL}/train-model")
+                st.write(res.json())
+            except requests.exceptions.RequestException as e:
+                st.error(f"Error: {str(e)}")
+
+    # Main content
+    st.header("Real-Time Recognition")
+    upload_image = st.file_uploader("Upload an image", type=["jpg", "jpeg", "png"])
+    
+    if upload_image is not None:
+        try:
+            files = {'image': upload_image}
+            res = requests.post(f"{BACKEND_URL}/recognize", files=files)
+            result = res.json()
+            st.write(f"Recognized Name: {result['name']}")
+        except requests.exceptions.RequestException as e:
+            st.error(f"Error: {str(e)}")
+
+    st.info("Use 'Capture Images (Webcam)' in the sidebar to build the dataset and then 'Train'. After that, upload images for recognition.")
+
+if __name__ == "__main__":
+    main()
