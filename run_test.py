@@ -13,7 +13,6 @@ def setup_face_recognition(model_name):
 def verify_face(frame, reference_dir, model_name, confidence_threshold=0.6):
 
     try:
-        # First check if any face is detected
         face_detector = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         faces = face_detector.detectMultiScale(gray, 1.3, 5)
