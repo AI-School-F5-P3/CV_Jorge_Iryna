@@ -34,16 +34,6 @@ def capture_images(name, num_samples=5):
     cv2.destroyAllWindows()
     return True
 
-'''# Helper function to train the model using DeepFace
-def train_model():
-    # DeepFace uses database directory approach; you can adapt as needed
-    try:
-        DeepFace.find("dummy.jpg", db_path=DATASET_PATH)  # Creates representations
-        return True
-    except Exception as e:
-        print(e)
-        return False
-'''
 
 # Helper function to train the model using DeepFace
 def train_model():
@@ -58,7 +48,9 @@ def train_model():
         first_image = os.path.join(DATASET_PATH, image_files[0])
         
         # Build representations for all images
-        DeepFace.build_model("VGG-Face")
+        # model = "VGG-Face" is used by default
+        model = "Facenet512"
+        DeepFace.build_model(model_name=model)
         _ = DeepFace.represent(img_path=first_image)
         
         return True
