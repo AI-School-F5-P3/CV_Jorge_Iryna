@@ -2,7 +2,7 @@ import cv2
 from deepface import DeepFace
 import numpy as np
 
-def setup_face_recognition(model_name="Facenet"):
+def setup_face_recognition(model_name):
 
     try:
         DeepFace.build_model(model_name)
@@ -10,7 +10,7 @@ def setup_face_recognition(model_name="Facenet"):
     except Exception as e:
         print(f"Error loading {model_name} model: {e}")
 
-def verify_face(frame, reference_dir, model_name="Facenet", confidence_threshold=0.6):
+def verify_face(frame, reference_dir, model_name, confidence_threshold=0.6):
 
     try:
         # First check if any face is detected
@@ -39,7 +39,8 @@ def verify_face(frame, reference_dir, model_name="Facenet", confidence_threshold
             
             if confidence > confidence_threshold:
                 identity = matched_face['identity']
-                person_name = identity.split("/")[-2]
+                person_name = identity.split("/")[-1]
+                person_name = person_name.split("\\")[0]
                 return True, person_name, confidence, True
         
         return False, None, 0, True
@@ -50,7 +51,7 @@ def verify_face(frame, reference_dir, model_name="Facenet", confidence_threshold
         traceback.print_exc()
         return False, None, 0, False
 
-def run_webcam_recognition(reference_dir, model_name="Facenet"):
+def run_webcam_recognition(reference_dir, model_name):
     cap = cv2.VideoCapture(0)
     
     if not cap.isOpened():
@@ -104,7 +105,7 @@ def run_webcam_recognition(reference_dir, model_name="Facenet"):
     cv2.destroyAllWindows()
 
 def main():
-    reference_dir = "dataset_preprocessed/iryna"
+    reference_dir = "dataset_preprocessed/jorge"
 
     # model_name = "VGG-Face"    
     # model_name = "Facenet"      # Good balance of speed and accuracy

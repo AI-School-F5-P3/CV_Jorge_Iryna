@@ -55,8 +55,8 @@ def augment_and_preprocess_dataset(input_dir, output_dir, required_size=(224, 22
 
 
 def main():
-    input_dir = "dataset/iryna"
-    output_dir = "dataset_preprocessed/iryna"
+    input_dir = "dataset/jorge"
+    output_dir = "dataset_preprocessed/jorge"
 
     augment_and_preprocess_dataset(input_dir, output_dir)
 
