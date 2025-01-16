@@ -15,12 +15,14 @@ DATASET_PATH = os.path.join(ROOT_DIR, 'backend', 'dataset')
 MODELS_PATH = os.path.join(ROOT_DIR, 'backend', 'models')
 MODEL_FILE = os.path.join(MODELS_PATH, 'face_model_facenet512.pkl')
 
+
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 
-def train_or_update_model(model_name="Facenet512"):
+
+def train_or_update_model(model_name):
     """
     Build or update the face recognition model by scanning all subdirs in backend/dataset.
     Stores the resulting model in backend/models/face_model_facenet512.pkl.
@@ -46,6 +48,7 @@ def train_or_update_model(model_name="Facenet512"):
         except Exception as e:
             logging.error(f"Error training/updating model: {e}")
 
+
 def capture_image(name):
     """Capture a single image from webcam and store it in backend/dataset/<name>."""
     cap = cv2.VideoCapture(0)
@@ -70,6 +73,7 @@ def capture_image(name):
     logging.info(f"Captured and saved image to {save_path}")
     return True
 
+
 def setup_face_recognition(model_name):
     """
     Loads the face recognition model into memory (after ensuring it's trained).
@@ -83,15 +87,30 @@ def setup_face_recognition(model_name):
         st.error(f"Error loading {model_name} model: {e}")
         logging.error(f"Error loading model: {e}")
 
-def verify_uploaded_image(uploaded_image, model_name="Facenet512"):
+
+def verify_uploaded_image(uploaded_image, model_name):
     """
-    Recognize who is in the uploaded image using the dataset and show the person's name.
+    Recognize who is in the uploaded image, draw bounding boxes, and display results.
     """
     try:
-        # Convert uploaded file to an OpenCV image
+        # Convert uploaded file to OpenCV image
         file_bytes = np.frombuffer(uploaded_image.read(), np.uint8)
         frame = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
-
+        
+        # Load face detector
+        face_detector = cv2.CascadeClassifier(
+            cv2.data.haarcascades + 'haarcascade_frontalface_default.xml'
+        )
+        
+        # Detect faces
+        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+        faces = face_detector.detectMultiScale(
+            gray,
+            scaleFactor=1.1,
+            minNeighbors=5,
+            minSize=(30, 30)
+        )
+        
         # Perform recognition
         result = DeepFace.find(
             img_path=frame,
@@ -101,19 +120,59 @@ def verify_uploaded_image(uploaded_image, model_name="Facenet512"):
             enforce_detection=False
         )
 
+        # Draw boxes and labels
         if len(result) > 0 and not result[0].empty:
             matched_face = result[0].iloc[0]
-            # Attempt to parse out name from file path
             identity_path = matched_face['identity']
             person_name = os.path.basename(os.path.dirname(identity_path))
+            
+            # Draw box for each detected face
+            for (x, y, w, h) in faces:
+                # Draw rectangle
+                cv2.rectangle(
+                    frame, 
+                    (x, y), 
+                    (x+w, y+h), 
+                    (0, 255, 0), 
+                    2
+                )
+                
+                # Add name label
+                cv2.putText(
+                    frame,
+                    f"{person_name}",
+                    (x, y-10),
+                    cv2.FONT_HERSHEY_SIMPLEX,
+                    0.9,
+                    (0, 255, 0),
+                    2
+                )
+            
+            # Convert to RGB for Streamlit display
+            frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            st.image(frame_rgb, caption="Recognized Face(s)")
             st.success(f"Recognized: {person_name}")
             logging.info(f"Recognized: {person_name}")
         else:
+            # Still show image with boxes even if not recognized
+            for (x, y, w, h) in faces:
+                cv2.rectangle(
+                    frame, 
+                    (x, y), 
+                    (x+w, y+h), 
+                    (0, 0, 255), 
+                    2
+                )
+            
+            frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+            st.image(frame_rgb, caption="Unrecognized Face(s)")
             st.warning("No match found.")
             logging.info("No match found in the dataset.")
+            
     except Exception as e:
         st.error(f"Error in face recognition: {str(e)}")
         logging.error(f"Face recognition error: {str(e)}")
+
 
 def verify_face(frame, model_name, confidence_threshold=0.6):
     """
@@ -161,6 +220,7 @@ def verify_face(frame, model_name, confidence_threshold=0.6):
     except Exception as e:
         logging.error(f"Verification error: {str(e)}")
         return False, None, 0, False
+
 
 def run_webcam_recognition(model_name):
     """
@@ -210,6 +270,7 @@ def run_webcam_recognition(model_name):
     cap.release()
     st.info("Recognition stopped.")
     logging.info("Webcam recognition stopped.")
+
 
 ############# STREAMLIT UI #############
 st.title("Face Recognition App")
