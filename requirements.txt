@@ -4,3 +4,4 @@ DeepFace
 opencv-python
 Pillow
 requests
+deepface
