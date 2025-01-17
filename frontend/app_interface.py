@@ -14,13 +14,27 @@ ROOT_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATASET_PATH = os.path.join(ROOT_DIR, 'backend', 'dataset')
 MODELS_PATH = os.path.join(ROOT_DIR, 'backend', 'models')
 MODEL_FILE = os.path.join(MODELS_PATH, 'face_model_facenet512.pkl')
-
+STYLE_PATH = os.path.join(ROOT_DIR, 'backend', 'styles', 'style.css')
 
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s'
 )
 
+st.set_page_config(
+    page_title="FaceControl",
+    page_icon="👽",
+    layout="wide"
+)
+
+def load_css():
+    try:
+        with open(STYLE_PATH) as f:
+            st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+    except Exception as e:
+        st.error(f"Error loading CSS file: {e}")
+        
+load_css()
 
 def train_or_update_model(model_name):
     """
@@ -273,7 +287,7 @@ def run_webcam_recognition(model_name):
 
 
 ############# STREAMLIT UI #############
-st.title("Face Recognition App")
+st.title("FaceControl")
 
 # 1) Capture images
 st.sidebar.header("Build Dataset")
