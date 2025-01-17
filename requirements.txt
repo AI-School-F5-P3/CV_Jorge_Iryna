@@ -1,2 +1,7 @@
-deepface
+Flask
+Streamlit
+DeepFace
 opencv-python
+Pillow
+requests
+deepface
