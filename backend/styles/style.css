@@ -1,0 +1,89 @@
+@import url('https://fonts.googleapis.com/css2?family=Finlandica:ital,wght@0,400..700;1,400..700&family=Jersey+15&display=swap');
+/* Reset default styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Apply Finlandica font to all headers */
+h1, h2, h3, h4, h5, h6 {
+    font-family: 'Finlandica', sans-serif;
+    color: #2C3E50;
+    margin-bottom: 1rem;
+}
+
+/* General App Styling */
+body {
+    background-color: #e6f7ff !important;
+    font-family: 'Finlandica', sans-serif;
+}
+
+/* Sidebar Styling */
+.css-1aumxhk {
+    background-color: #2c3e50 !important; /* Dark blue-grey */
+    color: #ecf0f1 !important; /* Light grey */
+}
+.css-1aumxhk a {
+    color: #1abc9c !important; /* Teal */
+    text-decoration: none !important;
+}
+.css-1aumxhk a:hover {
+    text-decoration: underline !important;
+}
+
+/* Title Styling */
+h1 {
+    color: #34495e !important; /* Slate grey */
+    text-align: center !important;
+    font-size: 2.5em !important;
+    margin-top: 20px !important;
+}
+
+/* Buttons */
+button {
+    background-color: #1abc9c !important; /* Teal */
+    color: white !important;
+    border: none !important;
+    border-radius: 5px !important;
+    padding: 10px 15px !important;
+    font-size: 1em !important;
+    cursor: pointer !important;
+}
+button:hover {
+    background-color: #16a085 !important; /* Darker teal */
+}
+
+/* Upload Box Styling */
+.css-1dp5vir {
+    border: 2px dashed #95a5a6 !important; /* Light grey border */
+    border-radius: 10px !important;
+    background-color: #ecf0f1 !important; /* Lighter grey */
+    text-align: center !important;
+    padding: 10px !important;
+    font-size: 1em !important;
+}
+
+/* Webcam Placeholder Styling */
+.css-1x8cf1d img {
+    border: 3px solid #1abc9c !important; /* Teal */
+    border-radius: 10px !important;
+}
+
+/* Alerts and Messages */
+.st-alert {
+    background-color: #e74c3c !important; /* Red */
+    color: white !important;
+    padding: 10px !important;
+    border-radius: 5px !important;
+    font-size: 1em !important;
+}
+
+/* Success Messages */
+.st-success {
+    background-color: #27ae60 !important; /* Green */
+    color: white !important;
+    padding: 10px !important;
+    border-radius: 5px !important;
+    font-size: 1em !important;
+}
