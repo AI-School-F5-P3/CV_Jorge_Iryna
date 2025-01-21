@@ -15,6 +15,7 @@ DATASET_PATH = os.path.join(ROOT_DIR, 'backend', 'dataset')
 MODELS_PATH = os.path.join(ROOT_DIR, 'backend', 'models')
 MODEL_FILE = os.path.join(MODELS_PATH, 'face_model_facenet512.pkl')
 STYLE_PATH = os.path.join(ROOT_DIR, 'backend', 'styles', 'style.css')
+LOGO_PATH = os.path.join(ROOT_DIR, 'backend', 'styles', 'logo.png')
 
 logging.basicConfig(
     level=logging.INFO,
@@ -26,6 +27,16 @@ st.set_page_config(
     page_icon="👽",
     layout="wide"
 )
+def load_logo(logo_path):
+    try:
+        col1, col2, col3, col4, col5 = st.columns([1, 1, 2, 1, 1])
+        with col3:
+            st.image(logo_path, width=150)
+    except Exception as e:
+        st.error(f"Error loading logo file: {e}")
+
+load_logo(LOGO_PATH)
+
 
 def load_css():
     try:
